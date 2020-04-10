@@ -6,4 +6,4 @@ module.exports = {
       diagnostics: false
     }
   }
-};
+}

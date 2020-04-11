@@ -1,4 +1,4 @@
-import { outCleanContact, inCleanContacts } from './dataTransform';
+import { outCleanContact, inCleanContacts, inCleanError } from './dataTransform';
 import { Contact, MDBResponse } from './../types/contacts';
 import { createContact as apiCreateContact, readContacts as apiReadContacts } from './../api';
 import { put, takeEvery, all, call } from "redux-saga/effects"
@@ -45,7 +45,8 @@ function* sendCreateContact (payload: Contact) {
   if (response) {
     yield put(fetchContacts(response))
   } else {
-    yield put(fetchContactsError(error))
+    const errorMessage = yield call(inCleanError, error)
+    yield put(fetchContactsError(errorMessage))
   }
 }
 
@@ -61,7 +62,8 @@ function* firstImport () {
     const contacts: Array<Contact> = yield call(inCleanContacts, response)
     yield put(contacts.length === 0 ? fetchSample() : fetchContacts(contacts))
   } else {
-    yield put(fetchContactsError(error))
+    const errorMessage = yield call(inCleanError, error)
+    yield put(fetchContactsError(errorMessage))
     yield put(fetchSample())
   }
 }

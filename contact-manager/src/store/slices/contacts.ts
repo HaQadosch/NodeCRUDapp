@@ -1,3 +1,4 @@
+import { Message } from './../../types/contacts';
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Draft } from "immer"
 import { Contact } from "../../types/contacts"
@@ -5,7 +6,7 @@ import { Contact } from "../../types/contacts"
 interface MutableContactsState {
   contacts: Array<Contact>
   contact: Contact | {}
-  message: Object
+  message: Message | {}
 }
 
 type ContactsState = Readonly<MutableContactsState>
@@ -49,12 +50,12 @@ const fetchContactsReducer = {
 }
 
 /**
- * { type: 'contacts/fetchContactsError', payload: error }
+ * { type: 'contacts/fetchContactsError', payload: Message }
  */
 const fetchContactsErrorReducer = {
-  fetchContactsError: (state: Draft<ContactsState>, { payload }: PayloadAction<Error>) => {
+  fetchContactsError: (state: Draft<ContactsState>, { payload }: PayloadAction<Message>) => {
     state.contact = {}
-    state.message = payload.message
+    state.message = payload
   }
 }
 
@@ -75,7 +76,7 @@ const fetchSampleReducer = {
  */
 const addContactReducer = {
   addContact: (state: Draft<ContactsState>, { payload }: PayloadAction<Contact>) => {
-    state.contacts = [payload, ...state.contacts]
+    state.contacts.push(payload)
     state.contact = {}
   }
 }

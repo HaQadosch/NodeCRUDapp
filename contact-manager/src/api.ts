@@ -44,7 +44,12 @@ export const createContact = (contact: Contact): APIResponse => {
     },
     body: JSON.stringify(contact)
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json()
+    })
     .then(response => ({ response, error: null }))
     .catch(createContactErr => ({ error: createContactErr, response: null }))
 }
@@ -57,7 +62,12 @@ export const createContact = (contact: Contact): APIResponse => {
  */
 export const readContacts = (): APIResponse => {
   return fetch(`${ url }`, { method: 'GET' })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json()
+    })
     .then(response => ({ response, error: null }))
     .catch(readContactErr => ({ error: readContactErr, response: null }))
 }
@@ -70,7 +80,12 @@ export const readContacts = (): APIResponse => {
  */
 export const readContact = (contactId: Contact['_id']): APIResponse => {
   return fetch(`${ url }/${ contactId }`, { method: 'GET' })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json()
+    })
     .catch(readContactErr => readContactErr)
 }
 
@@ -97,7 +112,12 @@ export const updateContact = (contact: Contact): APIResponse => {
     },
     body: JSON.stringify(contact)
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json()
+    })
     .catch(updateContactErr => updateContactErr)
 }
 
@@ -109,6 +129,11 @@ export const updateContact = (contact: Contact): APIResponse => {
  */
 export const deleteContact = (contactId: Contact['_id']): APIResponse => {
   return fetch(`${ url }/${ contactId }`, { method: 'DELETE' })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return res.json()
+    })
     .catch(deleteContactErr => deleteContactErr)
 }

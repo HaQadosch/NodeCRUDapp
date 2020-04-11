@@ -14,3 +14,9 @@ export interface MDBResponse {
   skip: number
   data: Array<Contact>
 }
+
+export interface Message {
+  type: 'success' | 'fail'
+  title: string
+  content: string
+}

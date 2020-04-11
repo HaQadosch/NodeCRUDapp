@@ -1,10 +1,5 @@
 import { put, takeEvery, all, call } from "redux-saga/effects"
-import { increment } from "./rootReducer";
-
-function* helloSaga () {
-  console.log({ saga: 'hello Saga!' })
-  yield 1
-}
+import { increment, fetchSample } from "./rootReducer";
 
 export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 
@@ -18,9 +13,13 @@ function* watchIncrementAsync () {
   yield takeEvery('saga/incrementAsync', incrementAsync)
 }
 
+function* firstImport () {
+  yield put(fetchSample())
+}
+
 export function* rootSaga () {
   yield all([
-    helloSaga(),
+    firstImport(),
     watchIncrementAsync()
   ])
 }

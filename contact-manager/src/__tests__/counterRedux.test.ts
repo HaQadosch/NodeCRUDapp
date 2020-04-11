@@ -1,7 +1,7 @@
 
 import { rootReducer } from '../store/rootReducer'
 
-test('reducers', () => {
+test.skip('reducers', () => {
   let state;
   state = rootReducer({ counter: { count: 0 } }, { type: 'counter/increment' });
   expect(state).toEqual({ counter: { count: 1 } });

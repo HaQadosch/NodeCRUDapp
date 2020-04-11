@@ -4,7 +4,7 @@ import { Counter } from '../Counter'
 import { Provider } from 'react-redux'
 import { store } from '../store/store'
 
-test('renders sync', () => {
+test.skip('renders sync', () => {
   const { getByText } = render(
     <Provider store={ store }>
       <Counter />

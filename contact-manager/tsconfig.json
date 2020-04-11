@@ -17,9 +17,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "."
   },
   "include": [
-    "src", "../postman.ts"
+    "src",
+    "../postman.ts"
   ]
 }

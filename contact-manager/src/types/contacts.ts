@@ -7,3 +7,10 @@ export interface Contact {
   phone: string
   email: string
 }
+
+export interface MDBResponse {
+  total: number
+  limit: number
+  skip: number
+  data: Array<Contact>
+}

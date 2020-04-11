@@ -10,7 +10,7 @@ const {
 
 const {
   reducer: contactsReducer,
-  actions: { fetchContacts, fetchSample }
+  actions: { fetchContacts, fetchSample, addContact, fetchContactsError }
 } = contactsSlice
 
 export const rootReducer = combineReducers({
@@ -22,5 +22,5 @@ export type RootState = ReturnType<typeof rootReducer>
 
 export {
   increment, decrement,
-  fetchContacts, fetchSample
+  fetchContacts, fetchSample, addContact, fetchContactsError
 }

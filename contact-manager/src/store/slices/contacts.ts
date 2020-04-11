@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit"
-import {  Draft } from "immer"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { Draft } from "immer"
 import { Contact } from "../../types/contacts"
 
 interface MutableContactsState {
@@ -39,11 +39,22 @@ const sample: Array<Contact> = [
 
 
 /**
- * { type: 'contacts/fetchContacts' }
+ * { type: 'contacts/fetchContacts', payload: [contact1, contact2, ...]}
  */
 const fetchContactsReducer = {
-  fetchContacts: (state: Draft<ContactsState>) => {
+  fetchContacts: (state: Draft<ContactsState>, { payload }: PayloadAction<Array<Contact>>) => {
+    state.contacts = payload
     state.contact = {}
+  }
+}
+
+/**
+ * { type: 'contacts/fetchContactsError', payload: error }
+ */
+const fetchContactsErrorReducer = {
+  fetchContactsError: (state: Draft<ContactsState>, { payload }: PayloadAction<Error>) => {
+    state.contact = {}
+    state.message = payload.message
   }
 }
 
@@ -58,11 +69,24 @@ const fetchSampleReducer = {
   }
 }
 
+/**
+ * { type: 'contacts/fetchSample' }
+ * Insert the contact samples
+ */
+const addContactReducer = {
+  addContact: (state: Draft<ContactsState>, { payload }: PayloadAction<Contact>) => {
+    state.contacts = [payload, ...state.contacts]
+    state.contact = {}
+  }
+}
+
 export const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {
     ...fetchContactsReducer,
-    ...fetchSampleReducer
+    ...fetchSampleReducer,
+    ...addContactReducer,
+    ...fetchContactsErrorReducer
   }
 })

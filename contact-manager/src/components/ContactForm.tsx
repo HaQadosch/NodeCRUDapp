@@ -2,17 +2,27 @@ import React from 'react'
 
 import { Grid, Form, Button } from "semantic-ui-react"
 import { useForm } from "react-hook-form"
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../store/rootReducer'
+import { AppDispatch } from '../store/store'
+import { Message } from '../types/contacts'
+import { Redirect } from "react-router-dom";
 
 interface IContactForm {
 
 }
 
 export const ContactForm: React.FC<IContactForm> = () => {
-  const { loading } = useSelector(({ contacts }: RootState) => contacts)
+  const { loading, message } = useSelector(({ contacts }: RootState) => contacts)
   const { handleSubmit, errors, register } = useForm()
-  const onSubmit = (data: Record<string, any>) => console.log({ data })
+  const dispatch: AppDispatch = useDispatch()
+  const onSubmit = (data: Record<string, any>) => {
+    dispatch({ type: 'saga/createContact', payload: data })
+  }
+
+  if ((message as Message).type === 'success') {
+    return <Redirect to="/" />
+  }
 
   return (
     <Grid centered columns={ 2 }>

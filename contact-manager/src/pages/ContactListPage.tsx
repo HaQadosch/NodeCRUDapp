@@ -16,12 +16,12 @@ export const ContactListPage: React.FC<IContactListPage> = () => {
   return (
     <div>
       <h1>List of contacts</h1>
-      <ContactList contacts={ contacts } />
       {
         (message as Message)?.content
           ? <FlashMessage message={ message as Message } />
           : null
       }
+      <ContactList contacts={ contacts } />
     </div>
   )
 }

@@ -1,8 +1,9 @@
-import { outCleanContact, inCleanContacts, inCleanError } from './dataTransform';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { outCleanContact, inCleanContacts, inCleanError, inCleanSuccess } from './dataTransform';
 import { Contact, MDBResponse } from './../types/contacts';
 import { createContact as apiCreateContact, readContacts as apiReadContacts } from './../api';
-import { put, takeEvery, all, call } from "redux-saga/effects"
-import { increment, fetchSample, addContact, fetchContacts, fetchContactsError } from "./rootReducer";
+import { put, takeEvery, all, call, delay } from "redux-saga/effects"
+import { fetchSample, fetchContacts, fetchContactsError, fetchContactSuccess, deleteMessage } from "./rootReducer";
 
 /**
  * All results from the APIs should have the same pattern: 
@@ -13,37 +14,18 @@ import { increment, fetchSample, addContact, fetchContacts, fetchContactsError }
  */
 type APIResponse<T> = { response: T, error: Error }
 
-export const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
-
-export function* incrementAsync () {
-  yield call(delay, 1000)
-  yield put(increment())
-}
-
-function* watchIncrementAsync () {
-  // @ts-ignore
-  yield takeEvery('saga/incrementAsync', incrementAsync)
-}
-
-/**
- * Add a contact in MDB and into the store
- * @param payload - the contact details we create in MDB
- */
-// function* createContact (payload: Contact) {
-//   const res = yield call(createContact, payload)
-//   const contact = outCleanContact<Contact>(res)
-//   yield put(addContact(contact))
-// }
-
 /**
  * Add a contact in MDB and refresh the store
  * @param payload - the contact details we create in MDB
  */
-function* sendCreateContact (payload: Contact) {
-  const cleanedContact = yield call(outCleanContact, payload)
-  const { response, error }: APIResponse<Array<Contact>> = yield call(apiCreateContact, cleanedContact)
+function* sendCreateContact (action: PayloadAction<Contact>) {
+  const cleanedContact = yield call(outCleanContact, action.payload)
+  const { response, error }: APIResponse<Contact> = yield call(apiCreateContact, cleanedContact)
+
   if (response) {
-    yield put(fetchContacts(response))
+    const successResponse = inCleanSuccess(response)
+    yield put(fetchContactSuccess(successResponse))
+    yield call(firstImport)
   } else {
     const errorMessage = yield call(inCleanError, error)
     yield put(fetchContactsError(errorMessage))
@@ -53,6 +35,20 @@ function* sendCreateContact (payload: Contact) {
 function* watchSendCreateContact () {
   // @ts-ignore
   yield takeEvery('saga/createContact', sendCreateContact)
+}
+
+
+/**
+ * Deletes message after a delay of 1s
+ */
+function* delayDeleteMessage () {
+  yield delay(1000)
+  yield put(deleteMessage())
+}
+
+function* watchDelayDeleteMessage () {
+  // @ts-ignore
+  yield takeEvery('saga/deleteMessage', delayDeleteMessage)
 }
 
 
@@ -71,6 +67,7 @@ function* firstImport () {
 export function* rootSaga () {
   yield all([
     firstImport(),
-    watchSendCreateContact()
+    watchSendCreateContact(),
+    watchDelayDeleteMessage()
   ])
 }

@@ -3,24 +3,6 @@ const url = 'http://localhost:3030/contacts'
 
 type APIResponse = Promise<{ response: JSON | null, error: Error | null }>
 
-const dataPOST = {
-  "name": {
-    "first": "Tony",
-    "last": "Stark"
-  },
-  "phone": "+18138683770",
-  "email": "tony@starkenterprises.com"
-}
-
-const dataPUT = {
-  "name": {
-    "first": "Tony",
-    "last": "Stark"
-  },
-  "phone": "+18138683770",
-  "email": "ts@starkenterprises.com"
-}
-
 /**
  * Add a contact into MDB
  * @param contact - the contact we want to add
@@ -69,7 +51,7 @@ export const readContacts = (): APIResponse => {
       return res.json()
     })
     .then(response => ({ response, error: null }))
-    .catch(readContactErr => ({ error: readContactErr, response: null }))
+    .catch(readContactsErr => ({ error: readContactsErr, response: null }))
 }
 
 /**
@@ -86,7 +68,8 @@ export const readContact = (contactId: Contact['_id']): APIResponse => {
       }
       return res.json()
     })
-    .catch(readContactErr => readContactErr)
+    .then(response => ({ response, error: null }))
+    .catch(readContactErr => ({ error: readContactErr, response: null }))
 }
 
 /**
@@ -96,12 +79,12 @@ export const readContact = (contactId: Contact['_id']): APIResponse => {
  * @example const updatedContact = updateContact({
  *  "_id": 65476737679149,
  *  "name": {
- *   "first": "Tony",
- *   "last": "Stark"
- *  },
- *  "phone": "+18138683770",
- *  "email": "ts_at_starkenterprises.co.uk"
- * }) */
+*   "first": "Tony",
+*   "last": "Stark"
+*  },
+*  "phone": "+18138683770",
+*  "email": "ts_at_starkenterprises.co.uk"
+* }) */
 export const updateContact = (contact: Contact): APIResponse => {
   return fetch(`${ url }/${ contact._id }`, {
     method: 'PUT',
@@ -118,7 +101,8 @@ export const updateContact = (contact: Contact): APIResponse => {
       }
       return res.json()
     })
-    .catch(updateContactErr => updateContactErr)
+    .then(response => ({ response, error: null }))
+    .catch(updateContactErr => ({ error: updateContactErr, response: null }))
 }
 
 /**
@@ -135,5 +119,6 @@ export const deleteContact = (contactId: Contact['_id']): APIResponse => {
       }
       return res.json()
     })
-    .catch(deleteContactErr => deleteContactErr)
+    .then(response => ({ response, error: null }))
+    .catch(deleteContactErr => ({ error: deleteContactErr, response: null }))
 }

@@ -12,6 +12,7 @@ export const FlashMessage: React.FC<FlashMessage> = ({ message: { type, title, c
   const dispatch: AppDispatch = useDispatch()
   React.useEffect(() => {
     dispatch({ type: 'saga/deleteMessage' })
+    // eslint-disable-next-line
   }, [])
   return (
     <Message

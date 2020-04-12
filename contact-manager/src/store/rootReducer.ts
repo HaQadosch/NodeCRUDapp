@@ -3,7 +3,12 @@ import { combineReducers } from "@reduxjs/toolkit"
 
 const {
   reducer: contactsReducer,
-  actions: { fetchContacts, fetchSample, fetchContactsError, fetchContactSuccess, deleteMessage }
+  actions: {
+    fetchContact, fetchContacts, fetchSample,
+    fetchContactsError, fetchContactsSuccess: fetchContactSuccess,
+    deleteMessage,
+    updateError, updateSuccess, updateContact
+  }
 } = contactsSlice
 
 export const rootReducer = combineReducers({
@@ -13,5 +18,5 @@ export const rootReducer = combineReducers({
 export type RootState = ReturnType<typeof rootReducer>
 
 export {
-  fetchContacts, fetchSample, fetchContactsError, fetchContactSuccess, deleteMessage
+  updateContact, fetchContacts, fetchSample, fetchContactsError, fetchContactSuccess, deleteMessage, fetchContact, updateError, updateSuccess
 }

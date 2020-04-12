@@ -9,15 +9,16 @@ import { Message } from '../types/contacts'
 import { Redirect } from "react-router-dom";
 
 interface IContactForm {
-
 }
 
 export const ContactForm: React.FC<IContactForm> = () => {
-  const { loading, message } = useSelector(({ contacts }: RootState) => contacts)
-  const { handleSubmit, errors, register } = useForm()
+  const { message, contact } = useSelector(({ contacts }: RootState) => contacts)
+  const { handleSubmit, errors, register } = useForm({ defaultValues: contact || undefined })
   const dispatch: AppDispatch = useDispatch()
   const onSubmit = (data: Record<string, any>) => {
-    dispatch({ type: 'saga/createContact', payload: data })
+    const type = contact ? 'saga/updateContact' : 'saga/createContact'
+    const payload = contact ? { ...data, _id: (contact || { _id: '' })?._id } : data
+    dispatch({ type, payload })
   }
 
   if ((message as Message).type === 'success') {
@@ -28,7 +29,7 @@ export const ContactForm: React.FC<IContactForm> = () => {
     <Grid centered columns={ 2 }>
       <Grid.Column>
         <h1 style={ { marginTop: '1em' } }>Add new contact</h1>
-        <Form onSubmit={ handleSubmit(onSubmit) } loading={ loading }>
+        <Form onSubmit={ handleSubmit(onSubmit) } >
           <Form.Group widths="equal" >
             <Form.Field className={ errors.name ? 'error' : '' }>
               <label htmlFor='name.first'>First name

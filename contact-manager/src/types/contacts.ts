@@ -20,3 +20,8 @@ export interface Message {
   title: string
   content: string
 }
+
+export type MDBContact = Contact & {
+  createdAt: string
+  updatedAt: string
+}

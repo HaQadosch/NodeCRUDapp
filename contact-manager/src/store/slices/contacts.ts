@@ -5,18 +5,16 @@ import { Contact } from "../../types/contacts"
 
 interface MutableContactsState {
   contacts: Array<Contact>
-  contact: Contact | {}
+  contact: Contact | null
   message: Message | {}
-  loading: boolean
 }
 
 type ContactsState = Readonly<MutableContactsState>
 
 const initialState = {
   contacts: [],
-  contact: {},
+  contact: null,
   message: {},
-  loading: false
 }
 
 const sample: Array<Contact> = [
@@ -47,7 +45,16 @@ const sample: Array<Contact> = [
 const fetchContactsReducer = {
   fetchContacts: (state: Draft<ContactsState>, { payload }: PayloadAction<Array<Contact>>) => {
     state.contacts = payload
-    state.contact = {}
+    state.contact = null
+  }
+}
+
+/**
+ * { type: 'contacts/fetchContact', payload: C ontact}
+ */
+const fetchContactReducer = {
+  fetchContact: (state: Draft<ContactsState>, { payload }: PayloadAction<Contact>) => {
+    state.contact = null
   }
 }
 
@@ -57,18 +64,51 @@ const fetchContactsReducer = {
  */
 const fetchContactsErrorReducer = {
   fetchContactsError: (state: Draft<ContactsState>, { payload }: PayloadAction<Message>) => {
-    state.contact = {}
+    state.contact = null
+    state.message = payload
+  }
+}
+
+/**
+ * { type: 'contacts/updateSuccess', payload: Contact & Message }
+ * After successfuly adding a new contact in MDB.
+ * The contact is added by the FETCH response but we don't use it.
+ */
+const updateSuccessReducer = {
+  updateSuccess: (state: Draft<ContactsState>, { payload: { message, contact } }: PayloadAction<{ contact: Contact, message: Message }>) => {
+    state.message = message
+  }
+}
+
+/**
+ * { type: 'contacts/updateContact', payload: ContactId }
+ * After successfuly adding a new contact in MDB.
+ * The contact is added by the FETCH response but we don't use it.
+ */
+const updateContactReducer = {
+  updateContact: (state: Draft<ContactsState>, { payload }: PayloadAction<Contact['_id']>) => {
+    state.contact = state.contacts.find(contact => contact._id === payload) || null
+  }
+}
+
+/**
+ * { type: 'contacts/updatesError', payload: Message }
+ * After an error when creating a contact
+ */
+const updateErrorReducer = {
+  updateError: (state: Draft<ContactsState>, { payload }: PayloadAction<Message>) => {
+    state.contact = null
     state.message = payload
   }
 }
 
 /**
  * { type: 'contacts/fetchContactSuccess', payload: Contact & Message }
- * After successfuly adding a new contact in MDB
+ * After successfuly adding a new contact in MDB.
+ * The contact is added by the FETCH response but we don't use it.
  */
 const fetchContactsSuccessReducer = {
-  fetchContactSuccess: (state: Draft<ContactsState>, { payload: { contact, message } }: PayloadAction<{ contact: Contact, message: Message }>) => {
-    state.contact = contact
+  fetchContactsSuccess: (state: Draft<ContactsState>, { payload: { message } }: PayloadAction<{ contact: Contact, message: Message }>) => {
     state.message = message
   }
 }
@@ -80,7 +120,7 @@ const fetchContactsSuccessReducer = {
 const fetchSampleReducer = {
   fetchSample: (state: Draft<ContactsState>) => {
     state.contacts = sample
-    state.contact = {}
+    state.contact = null
   }
 }
 
@@ -103,6 +143,10 @@ export const contactsSlice = createSlice({
     ...fetchSampleReducer,
     ...fetchContactsErrorReducer,
     ...fetchContactsSuccessReducer,
-    ...deleteMessageReducer
+    ...deleteMessageReducer,
+    ...fetchContactReducer,
+    ...updateSuccessReducer,
+    ...updateErrorReducer,
+    ...updateContactReducer
   }
 })

@@ -1,8 +1,23 @@
-import { Contact, Message } from './../types/contacts';
+import { Contact, Message, MDBContact } from './../types/contacts';
 
 export const outCleanContact = (contact: Contact) => contact
+export const outCleanContactId = (id: Contact['_id']) => id
 export const inCleanContacts = (collection: { data: Array<Contact> }) => {
   return collection.data
+}
+export const inCleanContact = ({ createdAt, updatedAt, ...contact }: MDBContact): Contact => {
+  return contact
+}
+
+export const inCleanUpdateSuccess = ({ createdAt, updatedAt, ...contact }: MDBContact): { message: Message, contact: Contact } => {
+  return {
+    message: {
+      type: 'success',
+      title: 'Update Successful',
+      content: `Contact "${contact.email}" has been updated!`
+    },
+    contact
+  }
 }
 
 export const inCleanError = (error: any): Message => {

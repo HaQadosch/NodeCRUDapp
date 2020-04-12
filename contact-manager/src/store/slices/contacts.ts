@@ -92,11 +92,32 @@ const updateContactReducer = {
 }
 
 /**
- * { type: 'contacts/updatesError', payload: Message }
+ * { type: 'contacts/updateError', payload: Message }
  * After an error when creating a contact
  */
 const updateErrorReducer = {
   updateError: (state: Draft<ContactsState>, { payload }: PayloadAction<Message>) => {
+    state.contact = null
+    state.message = payload
+  }
+}
+
+/**
+ * { type: 'contacts/deleteSuccess', payload: ContactId }
+ * After successfuly deleting an old contact in MDB.
+ */
+const deleteSuccessReducer = {
+  deleteSuccess: (state: Draft<ContactsState>, { payload: { message, contact } }: PayloadAction<{ contact: Contact, message: Message }>) => {
+    state.message = message
+  }
+}
+
+/**
+ * { type: 'contacts/deleteError', payload: Message }
+ * After an error when creating a contact
+ */
+const deleteErrorReducer = {
+  deleteError: (state: Draft<ContactsState>, { payload }: PayloadAction<Message>) => {
     state.contact = null
     state.message = payload
   }
@@ -109,6 +130,7 @@ const updateErrorReducer = {
  */
 const fetchContactsSuccessReducer = {
   fetchContactsSuccess: (state: Draft<ContactsState>, { payload: { message } }: PayloadAction<{ contact: Contact, message: Message }>) => {
+    state.contact = null
     state.message = message
   }
 }
@@ -147,6 +169,8 @@ export const contactsSlice = createSlice({
     ...fetchContactReducer,
     ...updateSuccessReducer,
     ...updateErrorReducer,
-    ...updateContactReducer
+    ...updateContactReducer,
+    ...deleteSuccessReducer,
+    ...deleteErrorReducer
   }
 })

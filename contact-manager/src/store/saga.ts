@@ -1,9 +1,9 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { outCleanContact, inCleanContacts, inCleanError, inCleanSuccess, outCleanContactId, inCleanContact, inCleanUpdateSuccess } from './dataTransform';
+import { inCleanDeleteSuccess, outCleanContact, inCleanContacts, inCleanError, inCleanSuccess, outCleanContactId, inCleanContact, inCleanUpdateSuccess } from './dataTransform';
 import { Contact, MDBResponse, MDBContact } from './../types/contacts';
-import { updateContact as apiUpdateContact, createContact as apiCreateContact, readContacts as apiReadContacts, readContact as apiReadContact } from './../api';
+import { deleteContact as apiDeleteContact, updateContact as apiUpdateContact, createContact as apiCreateContact, readContacts as apiReadContacts, readContact as apiReadContact } from './../api';
 import { put, takeEvery, all, call, delay } from "redux-saga/effects"
-import { updateSuccess, updateError, fetchContact, fetchSample, fetchContacts, fetchContactsError, fetchContactSuccess, deleteMessage } from "./rootReducer";
+import { updateSuccess, updateError, fetchContact, fetchSample, fetchContacts, fetchContactsError, fetchContactSuccess, deleteMessage, deleteSuccess, deleteError } from "./rootReducer";
 
 /**
  * All results from the APIs should have the same pattern: 
@@ -91,7 +91,6 @@ function* watchSendFetchContact () {
 function* sendUpdateContact (action: PayloadAction<Contact>) {
   const cleanedContactId = yield call(outCleanContact, action.payload)
   const { response, error }: APIResponse<MDBContact> = yield call(apiUpdateContact, cleanedContactId)
-  console.log({ response, error, action, cleanedContactId })
   if (response) {
     const successResponse = inCleanUpdateSuccess(response)
     yield put(updateSuccess(successResponse))
@@ -105,6 +104,30 @@ function* sendUpdateContact (action: PayloadAction<Contact>) {
 function* watchSendUpdateContact () {
   // @ts-ignore
   yield takeEvery('saga/updateContact', sendUpdateContact)
+}
+
+/**
+ * { type: 'saga/deleteContact', payload: 65476737679149 }
+ * Delete a Contect from MDB and refresh the store
+ * @param payload - the contact Id to delete in MDB
+ */
+function* sendDeleteContact (action: PayloadAction<Contact['_id']>) {
+  const cleanedContactId: Contact['_id'] = yield call(outCleanContactId, action.payload)
+  const { response, error }: APIResponse<MDBContact> = yield call(apiDeleteContact, cleanedContactId)
+  console.log({ response, error, action, cleanedContactId })
+  if (response) {
+    const successResponse = inCleanDeleteSuccess(response)
+    yield put(deleteSuccess(successResponse))
+    yield call(firstImport)
+  } else if (error) {
+    const errorMessage = yield call(inCleanError, error)
+    yield put(deleteError(errorMessage))
+  }
+}
+
+function* watchSendDeleteContact () {
+  // @ts-ignore
+  yield takeEvery('saga/deleteContact', sendDeleteContact)
 }
 
 function* firstImport () {
@@ -125,6 +148,7 @@ export function* rootSaga () {
     watchSendCreateContact(),
     watchDelayDeleteMessage(),
     watchSendFetchContact(),
-    watchSendUpdateContact()
+    watchSendUpdateContact(),
+    watchSendDeleteContact()
   ])
 }

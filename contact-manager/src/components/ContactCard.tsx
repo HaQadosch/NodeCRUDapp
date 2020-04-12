@@ -2,6 +2,8 @@ import React from 'react'
 import { Contact } from '../types/contacts'
 import { Card, Icon, Button } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../store/store';
 
 
 interface IContactCard {
@@ -9,6 +11,7 @@ interface IContactCard {
 }
 
 export const ContactCard: React.FC<IContactCard> = ({ contact: { _id, name, email, phone } }) => {
+  const dispatch: AppDispatch = useDispatch()
 
   return (
     <Card>
@@ -31,8 +34,14 @@ export const ContactCard: React.FC<IContactCard> = ({ contact: { _id, name, emai
           as={ Link }
           to={ `/contacts/edit/${ _id }` }
         >Edit</Button>
-        <Button basic color="red" >Delete</Button>
+        <Button basic color="red"
+          onClick={ handleDeleteClick }
+        >Delete</Button>
       </Card.Content>
     </Card>
   )
+
+  function handleDeleteClick () {
+    dispatch({ type: 'saga/deleteContact', payload: _id })
+  }
 }

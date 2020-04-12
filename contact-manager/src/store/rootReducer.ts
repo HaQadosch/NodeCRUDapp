@@ -7,7 +7,8 @@ const {
     fetchContact, fetchContacts, fetchSample,
     fetchContactsError, fetchContactsSuccess: fetchContactSuccess,
     deleteMessage,
-    updateError, updateSuccess, updateContact
+    updateError, updateSuccess, updateContact,
+    deleteSuccess, deleteError
   }
 } = contactsSlice
 
@@ -18,5 +19,5 @@ export const rootReducer = combineReducers({
 export type RootState = ReturnType<typeof rootReducer>
 
 export {
-  updateContact, fetchContacts, fetchSample, fetchContactsError, fetchContactSuccess, deleteMessage, fetchContact, updateError, updateSuccess
+  deleteError, deleteSuccess, updateContact, fetchContacts, fetchSample, fetchContactsError, fetchContactSuccess, deleteMessage, fetchContact, updateError, updateSuccess
 }

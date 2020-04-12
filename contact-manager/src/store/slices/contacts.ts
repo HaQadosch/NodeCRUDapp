@@ -7,6 +7,7 @@ interface MutableContactsState {
   contacts: Array<Contact>
   contact: Contact | {}
   message: Message | {}
+  loading: boolean
 }
 
 type ContactsState = Readonly<MutableContactsState>
@@ -14,7 +15,8 @@ type ContactsState = Readonly<MutableContactsState>
 const initialState = {
   contacts: [],
   contact: {},
-  message: {}
+  message: {},
+  loading: false
 }
 
 const sample: Array<Contact> = [
